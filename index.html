@@ -54,7 +54,7 @@
             const rows = data.results;
 
             // Filtrar checkboxes marcados
-            const checkboxesMarcados = rows.filter(row => row.properties["Concluído"].checkbox).length;
+            const checkboxesMarcados = rows.filter(row => row.properties["Caixa de seleção"].checkbox).length;
             const totalCheckBoxes = rows.length;
 
             // Calcular progresso
@@ -73,7 +73,7 @@
 
         // Atualizar a barra de progresso a cada 5 segundos (5000 milissegundos)
         setInterval(getCheckboxData, 5000);
-        
+
     </script>
 
 </body>
