@@ -15,11 +15,12 @@
             background-color: #ddd;
             border-radius: 10px;
             overflow: hidden;
+            margin-top: 20px;
         }
         .progress-bar {
             height: 30px;
             width: 0%;
-            background-color: #4caf50; /* Altere a cor aqui */
+            background-color: #4caf50; /* Cor da barra de progresso */
             text-align: center;
             line-height: 30px;
             color: white;
@@ -36,34 +37,48 @@
     </div>
 
     <script>
-        const notionAPI = "https://api.notion.com/v1/databases/19c053d92cdc8046bf0bdc00a91b1fde/query"; // Insira o ID da sua tabela
-        const notionToken = "ntn_o14067417249ZM5hdHi4UOlCuCb5CWiESMFB5ZxjZnd5N4"; // Insira seu token da API do Notion
+        // Substitua pelos seus próprios valores
+        const notionAPI = "https://api.notion.com/v1/databases/19c053d92cdc8046bf0bdc00a91b1fde/query"; // ID da sua tabela
+        const notionToken = "ntn_o14067417249ZM5hdHi4UOlCuCb5CWiESMFB5ZxjZnd5N4"; // Seu token da API do Notion
 
         async function getCheckboxData() {
-            const response = await fetch(notionAPI, {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${notionToken}`,
-                    "Content-Type": "application/json",
-                    "Notion-Version": "2022-06-28"
-                },
-                body: JSON.stringify({})
-            });
+            try {
+                const response = await fetch(notionAPI, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${notionToken}`,
+                        "Content-Type": "application/json",
+                        "Notion-Version": "2022-06-28"
+                    },
+                    body: JSON.stringify({})
+                });
 
-            const data = await response.json();
-            const rows = data.results;
+                if (!response.ok) {
+                    throw new Error(`Erro: ${response.status} - ${response.statusText}`);
+                }
 
-            // Filtrar checkboxes marcados
-            const checkboxesMarcados = rows.filter(row => row.properties["Caixa de seleção"].checkbox).length;
-            const totalCheckBoxes = rows.length;
+                const data = await response.json();
+                const rows = data.results;
 
-            // Calcular progresso
-            const progresso = Math.round((checkboxesMarcados / totalCheckBoxes) * 100);
-            updateProgress(progresso);
+                // Verifique se a propriedade "Caixa de seleção" existe
+                if (rows.length > 0 && !rows[0].properties.hasOwnProperty("Caixa de seleção")) {
+                    throw new Error('A propriedade "Caixa de seleção" não foi encontrada na tabela.');
+                }
+
+                // Filtrar checkboxes marcados
+                const checkboxesMarcados = rows.filter(row => row.properties["Caixa de seleção"].checkbox === true).length;
+                const totalCheckBoxes = rows.length;
+
+                // Calcular progresso
+                const progresso = totalCheckBoxes > 0 ? Math.round((checkboxesMarcados / totalCheckBoxes) * 100) : 0;
+                updateProgress(progresso);
+            } catch (error) {
+                console.error("Erro ao buscar dados do Notion:", error);
+            }
         }
 
         function updateProgress(percent) {
-            let progressBar = document.getElementById("progress-bar");
+            const progressBar = document.getElementById("progress-bar");
             progressBar.style.width = percent + "%";
             progressBar.innerText = percent + "%";
         }
@@ -73,7 +88,6 @@
 
         // Atualizar a barra de progresso a cada 5 segundos (5000 milissegundos)
         setInterval(getCheckboxData, 5000);
-
     </script>
 
 </body>
