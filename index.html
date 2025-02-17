@@ -36,8 +36,8 @@
     </div>
 
     <script>
-        const notionAPI = "https://api.notion.com/v1/databases/{DATABASE_ID}/query"; // Insira o ID da sua tabela
-        const notionToken = "secret_xxx"; // Insira seu token da API do Notion
+        const notionAPI = "https://api.notion.com/v1/databases/{19c053d92cdc8046bf0bdc00a91b1fde}/query"; // Insira o ID da sua tabela
+        const notionToken = "ntn_o14067417249ZM5hdHi4UOlCuCb5CWiESMFB5ZxjZnd5N4"; // Insira seu token da API do Notion
 
         async function getCheckboxData() {
             const response = await fetch(notionAPI, {
@@ -70,6 +70,10 @@
 
         // Atualizar progresso ao carregar a página
         getCheckboxData();
+
+        // Atualizar a barra de progresso a cada 5 segundos (5000 milissegundos)
+        setInterval(getCheckboxData, 5000);
+        
     </script>
 
 </body>
